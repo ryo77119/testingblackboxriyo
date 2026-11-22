@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Black Box Testing - Simulasi Diskon Belanja Online</title>
+  <style>
+    :root {
+      --bg-dark: #0B0F19;
+      --card-bg: #13192B;
+      --border-color: #252E4A;
+      --accent-purple: #8B5CF6;
+      --accent-blue: #3B82F6;
+      --neon-green: #10B981;
+      --danger-red: #EF4444;
+      --text-main: #F3F4F6;
+      --text-muted: #9CA3AF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #1E1B4B, var(--bg-dark) 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--neon-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-success {
+      background-color: var(--neon-green);
+      color: #064E3B;
+    }
+
+    .result-box {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background-color: var(--bg-dark);
+      border-left: 4px solid var(--accent-blue);
+      display: none;
+    }
+
+    .result-box.error {
+      border-left-color: var(--danger-red);
+      color: #FCA5A5;
+    }
+
+    .result-box.success {
+      border-left-color: var(--neon-green);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+      font-size: 0.92rem;
+    }
+
+    .result-row.total {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px dashed var(--border-color);
+      font-weight: bold;
+      font-size: 1.05rem;
+      color: var(--neon-green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      background-color: rgba(11, 15, 25, 0.5);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-pending {
+      background-color: #374151;
+      color: #D1D5DB;
+    }
+
+    .badge-pass {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: var(--neon-green);
+      border: 1px solid var(--neon-green);
+    }
+
+    .badge-fail {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: var(--danger-red);
+      border: 1px solid var(--danger-red);
+    }
+
+    .btn-test-row {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
+      background-color: var(--border-color);
+      color: var(--text-main);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-test-row:hover {
+      background-color: var(--accent-purple);
+    }
+
+    .student-info {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Black Box Testing: Sistem Diskon Belanja</h1>
+      <p>Tugas 2 — Software Testing dan Quality Assurance</p>
+    </header>
+
+    <div class="grid">
+      <!-- Panel Simulasi Input Manual -->
+      <div class="card">
+        <h2>Simulasi Aplikasi (SUT)</h2>
+        <div class="form-group">
+          <label for="totalBelanja">Masukkan Total Belanja (Rp)</label>
+          <input type="number" id="totalBelanja" placeholder="Contoh: 500000" />
+        </div>
+        <button class="btn btn-primary" onclick="ujiManual()">Hitung Total Pembayaran</button>
+        <button class="btn btn-success" onclick="jalankanSemuaTestCase()">Jalankan Semua 5 Test Case</button>
+
+        <div id="resultBox" class="result-box"></div>
+      </div>
+
+      <!-- Panel Tabel Test Case Black Box -->
+      <div class="card">
+        <h2>Daftar Test Case (Black Box)</h2>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Input</th>
+                <th>Expected Output</th>
+                <th>Actual Output</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="testTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="student-info">
+      Nama: <strong>Riyo Wahyu Saputra</strong> | NPM: <strong>2470111079</strong>
+    </div>
+  </div>
+
+  <script>
+    // Format angka ke Rupiah
+    function formatRupiah(angka) {
+      const sign = angka < 0 ? "-" : "";
+      return sign + "Rp" + Math.abs(angka).toLocaleString("id-ID");
+    }
+
+    // Fungsi Utama Aplikasi (System Under Test / Black Box)
+    function hitungDiskon(totalBelanja) {
+      if (isNaN(totalBelanja) || totalBelanja === null || totalBelanja === "") {
+        return { valid: false, message: "Input tidak boleh kosong" };
+      }
+      if (totalBelanja < 0) {
+        return { valid: false, message: "Transaksi ditolak (nilai negatif)" };
+      }
+      if (totalBelanja >= 500000) {
+        const diskon = totalBelanja * 0.1;
+        const totalBayar = totalBelanja - diskon;
+        return {
+          valid: true,
+          diskon: diskon,
+          totalBayar: totalBayar,
+          summary: `Diskon 10%, Bayar ${formatRupiah(totalBayar)}`
+        };
+      }
+      return {
+        valid: true,
+        diskon: 0,
+        totalBayar: totalBelanja,
+        summary: `Tanpa diskon, Bayar ${formatRupiah(totalBelanja)}`
+      };
+    }
+
+    // Data 5 Test Case sesuai Jawaban A
+    const testCases = [
+      {
+        id: "TC-01",
+        input: -50000,
+        expected: "Transaksi ditolak (nilai negatif)"
+      },
+      {
+        id: "TC-02",
+        input: 0,
+        expected: "Tanpa diskon, Bayar Rp0"
+      },
+      {
+        id: "TC-03",
+        input: 499999,
+        expected: "Tanpa diskon, Bayar Rp499.999"
+      },
+      {
+        id: "TC-04",
+        input: 500000,
+        expected: "Diskon 10%, Bayar Rp450.000"
+      },
+      {
+        id: "TC-05",
+        input: 750000,
+        expected: "Diskon 10%, Bayar Rp675.000"
+      }
+    ];
+
+    // Render awal tabel Test Case
+    function renderTabel() {
+      const tbody = document.getElementById("testTableBody");
+      tbody.innerHTML = "";
+      testCases.forEach((tc, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${tc.id}</strong></td>
+          <td>${formatRupiah(tc.input)}</td>
+          <td>${tc.expected}</td>
+          <td id="actual-${index}">-</td>
+          <td id="status-${index}"><span class="badge badge-pending">BELUM DIUJI</span></td>
+          <td><button class="btn-test-row" onclick="jalankanSatuTest(${index})">Uji</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Pengujian Manual lewat Form
+    function ujiManual() {
+      const inputVal = parseFloat(document.getElementById("totalBelanja").value);
+      const resultBox = document.getElementById("resultBox");
+      const hasil = hitungDiskon(inputVal);
+
+      resultBox.style.display = "block";
+      if (!hasil.valid) {
+        resultBox.className = "result-box error";
+        resultBox.innerHTML = `<strong>Status Ditolak:</strong> ${hasil.message}`;
+      } else {
+        resultBox.className = "result-box success";
+        resultBox.innerHTML = `
+          <div class="result-row"><span>Total Belanja:</span><span>${formatRupiah(inputVal)}</span></div>
+          <div class="result-row"><span>Potongan Diskon:</span><span>- ${formatRupiah(hasil.diskon)}</span></div>
+          <div class="result-row total"><span>Total Pembayaran:</span><span>${formatRupiah(hasil.totalBayar)}</span></div>
+        `;
+      }
+    }
+
+    // Jalankan 1 Test Case dari Tabel
+    function jalankanSatuTest(index) {
+      const tc = testCases[index];
+      document.getElementById("totalBelanja").value = tc.input;
+      ujiManual();
+
+      const hasil = hitungDiskon(tc.input);
+      const actualText = hasil.valid ? hasil.summary : hasil.message;
+      const isPass = actualText === tc.expected;
+
+      document.getElementById(`actual-${index}`).textContent = actualText;
+      document.getElementById(`status-${index}`).innerHTML = isPass
+        ? `<span class="badge badge-pass">PASS</span>`
+        : `<span class="badge badge-fail">FAIL</span>`;
+    }
+
+    // Jalankan Semua 5 Test Case Otomatis
+    function jalankanSemuaTestCase() {
+      testCases.forEach((_, index) => {
+        jalankanSatuTest(index);
+      });
+    }
+
+    renderTabel();
+  </script>
+</body>
+</html>
